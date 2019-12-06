@@ -1,7 +1,0 @@
-Assume that you have a folder named as biometrics_final_shared. In this folder, you must have following 6 folders. 
-1) ck+ folder(this is the raw folder after downloading ck+ and unzipping it)
-2) images_for_progress(this folder will be filled by the main_before_fianl.py script)
-3) train_samples_all_emotions(an empty folder. will be filled by preprocess_data_set)
-4) wild_neutralized(initially empty. will be filled by main_before_final)
-5) wild_sample_images(contains 16 happy face image. If you want to neutralize another face you have to put the picture in this folder)
-6) wild_sample_images_preprocessed(initially empty. Will be filled by preprocess_data_set)

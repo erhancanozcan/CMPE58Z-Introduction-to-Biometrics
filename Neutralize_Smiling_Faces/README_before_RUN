@@ -1,0 +1,102 @@
+Assume that you have a folder named as biometrics_final_shared. In this folder, you must have following 5 folders. 
+1) ck+ folder(this is the raw folder after downloading ck+ and unzipping it)
+2) train_samples_all_emotions(an empty folder. will be filled by preprocess_data_set)
+3) wild_neutralized(initially empty. will be filled by main_before_final)
+4) wild_sample_images(contains 16 happy face image. If you want to neutralize another face you have to put the picture in this folder)
+5) wild_sample_images_preprocessed(initially empty. Will be filled by preprocess_data_set)
+
+
+In addition to these, there are 4 python script files.
+
+1)face_detection.py
+2)main_before_final.ipynb
+3)obtain_training_pairs_from_raw_data_set.py
+4)preprocess_data_set.ipynb
+
+
+If you want to run the code, you can follow the instructions step by step.
+
+1) Please open the script preprocess_data_set.py.  This script uses libraries such as cv2 and dlib(one used in assignment 2)
+You need python 3.6 to be able to run the code.
+
+2) In line 31: you need to adjust the variable folder_address. In my case, you can see that it is set to
+folder_address="/Users/can/Desktop/biometrics_final_shared"
+
+3) In line 32: you can change the emotion index. All the study is conducted through using happy faces(therefore, selected_emotion=5). 
+If you want to use other emotions, you can see more detailed explanation in the text file.
+
+4)fill_train_samples_all_emotions(folder_address) this function will fill the “train_samples_all_emotions” folder. 
+After executing it, you will create 327 folders. Each folder has neutral_face, emotional_face, and emotion_index in it.
+
+
+5)face_detect_allign_resize(folder_address) this function will utilize opencv to detect faces initially. 
+Then, again using some functions from opencv, it will align the faces. Finally, images are rescaled to 32*32. 
+All these operations will be applied to the pictures in folder “train_samples_all_emotions”.
+This process may take several minutes. Now, you have aligned and re-scaled training pairs. 
+
+6) Finally, to be able to work on collab, I have saved images into flatten 2D csv. Image per row, and each image 32*32 pixel. obtain_flatten_images_of_desired_emotion(emotion_index=selected_emotion,folder_address=folder_address) this function does the operation above. After running this function, in the main folder, there must be created two csv files. named as flat_emotioanl.csv and flat_neutral.csv
+
+
+7) you have completed the work related to ck+. However, if you want to neutralize your pictures, you need to follow the instructions below.
+	7.1. There are 16 images in wild_sample_images. If you want, you can additional pictures into 		this folder.(Note that wild_neutralized and wild_sample_images_preprocessed folders are
+		initially empty)
+	7.2  When you run the “face_detect_allign_resize_wild_images(folder_address)” (line 72).
+		You will apply the processes described in step 5 to the pictures in the folder 
+		wild_sample_images. As a result of this, wild_sample_images_preprocessed file will be 		filled with your pictures.
+8) We are done with the script: preprocess_data_set.py.
+
+
+
+9) it is time to construct the model. Therefore, please open the main_before_final.py script. You will need python 2.7 to be able to run the script. Necessary libraries are tensorflow and cv2 again. (At this point, I need to explain why I started using python 2.7 instead of 3.6. I have started working on this project before assignment 2 is given. After assignment2 is given, despite my intense effort, I could not manage to set dlib library in the python 2.7. Therefore, I have used it in python 3.6. The main_before_final.py script is mostly compatible with python 3.6  except 3 or 4 print commands. You do not need to make any major changes. Therefore, I immediately tried using python 3.6 by adjusting the code. However, in the training phase, while updating the weights code either crashes or throws an error after the completion of training. You can try using python 3.6. However, I could not manage it. Therefore, I have used python 2.7 in this script.) 
+
+10) After the long explanation, please open main_before_final.py with python 2.7. In line 8, you need to adjust the folder_address variable again. See the example below.
+		
+			folder_address="/Users/can/Desktop/biometrics_final_shared"
+
+You are not required to do any change other than this.
+
+
+11) Between lines 8-600 the model in reference paper is constructed step by step. After line 602, the loop for training will start. I have set the iterations=1 in line 607 to show you that model can be trained without having any problem. If you want to train it yourself please set it to a huge number (ex:1000000) I can assure you that test error will be less than 500. and It will stop. However, it can take substantial amount of time. Therefore, it is reasonable to set iterations=1. Please wait until the end of this loop. It may take several minutes. 
+
+12) between line 693 and 757, you have some useful functions to plot train-test neutral and emotional pictures. Also you can plot neutralized emotional pictures via the functions in these area.
+
+13) between line 759- and 763, you will adjust the weights using the pre-trained model. Note that pre-trained model exist in the folder trained_model>>>average_tr_te_error_less500.
+
+
+14) now, you can visualize the pictures using the lines between 766 and 839.
+	14.1) to visualize pictures from training set, set tr_ind variable. tr_ind=0,1,2,…,58
+		14.1.1) you can use the three line to visualize.
+				#TRAINIG   
+				tr_ind=58
+				
+				#emotional train sample
+				plt.imshow(emotional_pics[tr_ind,], cmap='gray')
+				
+				#neutral train sample
+				plt.imshow(neutral_pics[tr_ind,], cmap='gray')
+
+				#neutralized train sample
+				visualize_produced_image_train(tr_ind)
+	14.2 to visualize pictures from test set. te_ind=0,1,2,3,….,9
+		14.2.1) you can use the three line related to test.
+
+	14.3 to visualize pictures that are in wild conditions you can use the two lines below.
+
+		14.3.1
+			visualize_wild_image(0,folder_address)
+			wild_image_neutralize(0,folder_address)
+
+
+15)lines between 840, and 872 saves the generated pictures. 
+
+		15.1 save_tr_images(tr_index) : image will be saved into
+			images_for_progress>>>realmodel>>>tr
+		15.2 save_te_images(te_index) : image will be saved into
+			images_for_progress>>>realmodel>>>test
+		
+		15.3 save_wild(index,folder_address) index=0,1,2,3,…,16. depends on no of pictures in it.
+			images will be saved into: wild_neutralized folder.
+
+
+Final look of biometrics_final_shared folder.
+
